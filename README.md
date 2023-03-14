@@ -14,7 +14,7 @@ This is a repository for the course [18.065: Matrix Methods in Data Analysis, Si
 
 **Grading**: 50% homework, 50% final project.
 
-**Homework**: Biweekly, due Fridays (2/17, 3/3, 3/17, 4/7, 4/21, 5/5) [on Canvas](https://canvas.mit.edu/courses/18680).  You may consult with other students or any other resources you want, but must write up your solutions *on your own*.
+**Homework**: Biweekly, due Fridays (2/17, 3/3, 3/17, 4/7, 4/21, 5/5) [on Canvas](https://canvas.mit.edu/courses/18680).  You may consult with other students or any other resources you want, but must write up your solutions *on your own*.  Psets are accepted until solutions are posted (sometime Friday); extensions require permission of instructor.
 
 **Exams**: None.
 
@@ -148,8 +148,60 @@ The *nice* case of diagonalization is when you have **orthonormal eigenvectors**
 ## Lecture 10 (Feb 27)
 
 * Training vs test data: [VMLS slides p. 294](https://web.stanford.edu/~boyd/vmls/vmls-slides.pdf#page=294)
-* Conditioning: κ(A) = (max σ)(min σ) is the [condition number](https://en.wikipedia.org/wiki/Condition_number) of a matrix A, and gives us a bound on the "amplification" ‖Δx‖/‖x‖ ≤ κ(a) ‖Δb‖/‖b‖ of the relative error from inputs (b) to outputs (x) when solving Ax=b (including least-squares).   "Ill-conditioned problems" (κ≫1) magnify noise and other errors, and typically require some **regularization** (e.g. dropping smallest σ's) that **trades off robustness for accuracy** ‖b-Ax‖.
+* Conditioning: κ(A) = (max σ)/(min σ) is the [condition number](https://en.wikipedia.org/wiki/Condition_number) of a matrix A, and gives us a bound on the "amplification" ‖Δx‖/‖x‖ ≤ κ(a) ‖Δb‖/‖b‖ of the relative error from inputs (b) to outputs (x) when solving Ax=b (including least-squares).   "Ill-conditioned problems" (κ≫1) magnify noise and other errors, and typically require some **regularization** (e.g. dropping smallest σ's) that **trades off robustness for accuracy** ‖b-Ax‖.
 * Ridge/Tikhonov/ℓ² regularization: minimize ‖b-Ax‖₂² + δ²‖x‖₂² for some *penalty* δ≠0 to push the solution towards smaller x.  (More generally, δ²‖Dx‖₂² for some matrix D.)  This gives (AᵀA+δ²I)x̂=Aᵀb, which is similar to A⁺b but replaces 1/σ with σ/(σ²+δ²).  Effectively, this drops small σ's, but doesn't require an SVD and generalizes to other types of penalties.  (Example: [VMLS slides pg. 346](https://web.stanford.edu/~boyd/vmls/vmls-slides.pdf#page=346).)
 * Under-determined problems: for "wide" matrices, Ax=b has many solutions (we can add any N(A) vector to a solution).  A common way to pick a solution is to pick the **minimum-norm** solution: minimize ‖x‖₂ subject to Ax=b.  (It turns out that this gives x̂=A⁺b!)
 
 **Further reading**: Training/test data: [VMLS section 13.2](https://web.stanford.edu/~boyd/vmls/vmls.pdf#page=270). Condition numbers: Strang exercises II.3, [OCW video lecture 10](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-10-survey-of-difficulties-with-ax-b/), and [these 18.06 notes](https://github.com/mitmath/1806/blob/master/notes/Conditioning.ipynb); a more in-depth treatment can be found in e.g. *Numerical Linear Algebra* by Trefethen and Bau (the 18.335 textbook).  Tikhonov regularization: Strang section II.2, OCW video lecture 10, [VMLS section 15.3](https://web.stanford.edu/~boyd/vmls/vmls.pdf#page=326).  Underdetermined minimum-norm solutions: Strang section II.2, [OCW video lecture 11](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-11-minimizing-2016x2016-subject-to-ax-b/), [UIUC *Nonlinear Programming* lecture notes](https://faculty.math.illinois.edu/~mlavrov/docs/484-spring-2019/ch4lec4.pdf).
+
+## Lecture 11 (Mar 1)
+
+* Minimum-norm solutions x̂=A⁺b=Aᵀ(AAᵀ)⁻¹: smallest ‖x‖₂ for underdetermined problems Ax=b for "wide" A.
+* Other common norms: ℓ¹ and ℓ<sup>∞</sup>, and sparsity with ‖x‖₁ norm ([LASSO regularization](https://en.wikipedia.org/wiki/Lasso_(statistics))).
+* Avoid AᵀA: it squares the condition number κ(AᵀA)=κ(A)²
+* Gram–Schmidt orthogonalization and QR factorization.
+
+**Further reading**: Strang II.2, II.4.
+
+## Lecture 12 (Mar 3)
+
+* **QR factorization**: "thin" vs. "full" QR; practical considerations: pivoted QR, instability of classical Gram–Schmidt vs. modified G–S or "G–S twice" or Householder/Givens QR; the fact that many QR algorithms don't give you Q explicitly, only a fast way to multiply Qx or Qᵀy.
+* Usage of QR for least-squares problem: AᵀAx̂=Aᵀb ⥰ Rx̂=Qᵀb.   (But this does not mean Ax̂=b!  QQᵀ is orthogonal projection onto C(A), ≠ I in general!)   This avoids squaring the condition number since κ(R)=κ(A).
+* **Large-scale linear algebra**:  When solving m×m Ax=b for large m, we have a few options:
+  - Dense linear algebra: Gaussian elimination, QR, eigenvalues, SVD, etcetera, assuming that A is just m×m numbers with no special structure.  Cost is Θ(m³), memory is Θ(m²).  Usually you run out of memory before running out of time! (m ∼ 10⁴ is close to filling up memory, but runs in only few minutes.)
+  - Sparse-direct methods: For [sparse matrices](https://en.wikipedia.org/wiki/Sparse_matrix) (mostly 0), only store and compute with nonzero entries.  If a clever ordering is chosen for rows/cols, Gaussian elimination can often produce mostly sparse L and U factors!  (This is what `A \ b` does in Julia if `A` is a [sparse-matrix type](https://github.com/JuliaSparse/SparseArrays.jl).)   But for very big problems even these methods can eventually run out of memory.
+  - Iterative methods: start with a "guess" for x (usually x=0 or x=random), and iteratively make it closer to a solution **using only A-times-vector operations** (and linear combinations and dot products).  Requires a fast A-times-vector, e.g. if A is sparse, low rank, a convolution, or some combination thereof.   Modern methods include [GMRES](https://en.wikipedia.org/wiki/Generalized_minimal_residual_method), [BiCGSTAB(ℓ)](https://en.wikipedia.org/wiki/Biconjugate_gradient_stabilized_method), [conjugate gradient (CG)](https://en.wikipedia.org/wiki/Conjugate_gradient_method), and others.
+  - Randomized linear algebra: by multiplying A on the left/right by small random wide/thin matrices, carefully chosen, we can construct an approximate "sketch" of A that can be used to estimate the SVD, solutions to least-squares, etcetera, and can also accelerate iterative solvers.
+  - Tricks for special cases: there are various specialized techniques for convolution/circulant matrices (via FFTs), [banded matrices](https://en.wikipedia.org/wiki/Band_matrix) (linear-time methods), and low-rank updates ([Sherman–Morrison formula](https://en.wikipedia.org/wiki/Sherman%E2%80%93Morrison_formula))
+* [pset 2 solutions](psets/pset2sol.ipynb)
+* [pset 3](psets/pset3.ipynb) (due 3/17)
+
+**Further reading:** For Gram–Schmidt and QR, see further reading for lecture 9.  Texbook section II.1, [OCW video lecture 10](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-10-survey-of-difficulties-with-ax-b/). Sparse-direct solvers are described in detail by the book *Direct Methods for Sparse Linear Systems* by Davis.  Iterative methods: More advanced treatments include the book *Numerical Linear Algebra* by Trefethen and Bao, and surveys of algorithms can be found in the *Templates* books for [Ax=b](http://www.netlib.org/linalg/html_templates/Templates.html) and [Ax=λx](http://web.cs.ucdavis.edu/~bai/ET/contents.html).  [Some crude rules of thumb](https://github.com/mitmath/18335/blob/spring20/notes/solver-options.pdf) for solving linear systems (from 18.335 spring 2020).
+
+## Lecture 13 (Mar 6)
+
+* Continued summary of large-scale linear algebra from lecture 12, mentioning randomized algorithms (which we will cover in more detail later), such as "sketched" least-squares and randomized SVD, and also specialized algorithms for particular cases.
+* Krylov methods: defined [Krylov subspaces](https://en.wikipedia.org/wiki/Krylov_subspace) reachable by iterative algorithms, defined a Krylov algorithm (loosely) an iterative algorithm that finds the "best" solution in the whole Krylov space (possibly approximately) on the n-th step.  Gave [power iteration](https://en.wikipedia.org/wiki/Power_iteration) for largest |λ| as an example of something *not* a Krylov method.  Explained why the basis (b Ab A²b ⋯) is a poor (ill-conditioned) choice, and instead explained the [Arnoldi iteration](https://en.wikipedia.org/wiki/Arnoldi_iteration) to find an orthonormal basis Qₙ by (essentially) Gram–Schmidt, leading to the [GMRES algorithm](https://en.wikipedia.org/wiki/Generalized_minimal_residual_method) for Ax=b.
+
+**Further reading:** Arnoldi iterations and GMRES are covered in the Strang textbook section II.1, and briefly in [OCW lecture 12](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-12-computing-eigenvalues-and-singular-values/); much more detail is found other sources (Trefethen, etc.) noted in the further reading for Lecture 12.  A review of randomized linear algebra can be found in the Strang textbook sec. II.4, and also in [Halko, Martinsson, and Tropp (2011)](https://epubs.siam.org/doi/10.1137/090771806).  A recent paper on a variety of new randomized algorithms, e.g. for "sketched" least-square problems or to accelerate iterative algorithms like GMRES, is [Nakatsukasa and Tropp (2022)](https://arxiv.org/pdf/2111.00113.pdf).  A nice review of the randomized SVD can be found in a blog post by [Gregory Gundersen (2019)](https://gregorygundersen.com/blog/2019/01/17/randomized-svd/).
+
+
+## Lecture 14 (Mar 8)
+
+* Krylov wrap-up:
+  - GMRES caveats: storage is Θ(mn) after n steps, and cost of orthogonalization is Θ(mn²), so in practice one is often limited to n ≲ 100.  Workarounds include: "[restarted GMRES](https://personal.math.vt.edu/embree/39961.pdf)", randomized "[sketched GMRES](https://arxiv.org/pdf/2111.00113.pdf)", and approximate Krylov methods such as biCGSTAB(ℓ), QMR, or DQGMRES.   If A is Hermitian positive-definite, however, then there is ideal Krylov method called [conjugate gradient (CG)](https://en.wikipedia.org/wiki/Conjugate_gradient_method) that "magically" searches the whole Krylov space using only the two most recent search directions on each iteration; CG is [closely related](https://www.sciencedirect.com/science/article/abs/pii/S0893608003001709) to the "momentum" terms used in stochastic gradient descent / machine learning (covered later in 18.065).
+  - GMRES convergence theory is complicated (see e.g. lecture 35 in [Trefethen & Bau](https://people.maths.ox.ac.uk/trefethen/text.html)), but basically it converges faster if the eigenvalues are mostly "clustered" (making A more like I).  You can therefore accelerate convergence by finding a [preconditioner](https://en.wikipedia.org/wiki/Preconditioner) matrix M such that MA has more-clustered eigenvalues (M is a "crude inverse" of A), and then solve MAx=Mb instead of Ax=b.  This can accelerate convergence by orders of magnitude, but finding a good preconditioner is a tricky problem-dependent task.
+  - Krylov methods also exist for eigenproblems (e.g. Arnoldi and Jacobi-Davidson methods, or Lanczos and LOPCG for Hermitian problems), the SVD (requiring both Ax and Aᵀy operations), least-squares problems, and so on.
+* Randomized linear algebra:
+  - Randomized SVD, as covered in these notes by [Gregory Gundersen (2019)](https://gregorygundersen.com/blog/2019/01/17/randomized-svd/)
+  - Randomized matrix multiplication AB ≈ random sampling (col j of A)(row j of B)/pⱼ with probability pⱼ. Choosing pⱼ proportional to ‖col j of A‖⋅‖row j of B‖ minimizes the variance of this estimate!  See Strang textbook section II.4 and [OCW lecture 13](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-13-randomized-matrix-multiplication/).
+
+**Further reading:** See links above, and further reading from lecture 13.
+
+## Lecture 16 (Mar 13)
+
+* [Optimization overview](https://docs.google.com/presentation/d/1K8BFfd-_6IWML2zpj_V88GvBjuJiK8EPHqYabDMU3CU/edit?usp=sharing) slides
+
+Broad overview of optimization problems (see slides). The most general formulation is actually quite difficult to solve, so most algorithms (especially the most efficient algorithms) solve various special cases, and it is important to know what the key factors are that distinguish a particular problem. There is also something of an art to the problem formulation itself, e.g. a nondifferentiable minimax problem can be reformulated as a nicer differentiable problem with differentiable constraints.
+
+**Further reading:** There are many textbooks on [nonlinear optimization](http://www.athenasc.com/nonlinbook.html) algorithms of various sorts, including specialized books on [convex optimization](http://web.stanford.edu/~boyd/cvxbook/), [derivative-free optimization](http://bookstore.siam.org/mp08/), etcetera.  A useful review of topology-optimization methods can be found in [Sigmund and Maute (2013)](https://link.springer.com/article/10.1007/s00158-013-0978-6).
