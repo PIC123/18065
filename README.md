@@ -198,6 +198,20 @@ The *nice* case of diagonalization is when you have **orthonormal eigenvectors**
 
 **Further reading:** See links above, and further reading from lecture 13.
 
+## Lecture 15 (Mar 10)
+
+* [Weighted least squares (WLS)](https://en.wikipedia.org/wiki/Weighted_least_squares) and [generalized least squares (GLS)](https://en.wikipedia.org/wiki/Generalized_least_squares): when fitting a model with noisy measurements, we want to *weight* the least-squares minimization inversely with the errors (variances) in the measurements (WLS), or more generally with the inverse of the measurement correlation matrix (GLS); see textbook section V.5.
+ - Reviewed correlation matrix V and its positive semidefiniteness/definiteness (textbook section V.4).
+ - Framed in terms of minimizing a [weighted ℓ² norm](https://math.stackexchange.com/questions/394237/understanding-weighted-inner-product-and-weighted-norms) ‖b-Ax‖<sub>V⁻¹</sub> and gave the WLS formula x̂=(AᵀV⁻¹A)⁻¹AᵀV⁻¹b = Lb.
+ - This is an [unbiased estimator](https://en.wikipedia.org/wiki/Bias_of_an_estimator) if the measurement errors are unbiased.
+ - Correlation matrix ("error bars") in the estimate x̂ is then given by W=LVLᵀ=(AᵀV⁻¹A)⁻¹ (textbook V.5).
+* [Gauss–Markov theorem](https://en.wikipedia.org/wiki/Gauss%E2%80%93Markov_theorem): WLS/GLS is the unbiased linear estimator that *minimizes the variance* of the estimated parameters x.
+  - in particular, showed that *any* other unbiased linear estimator gives a covariance W′ = W + (positive semidefinite), which results in ‖W′‖≥‖W‖ in the ℓ² (induced) or Frobenius norms
+  - this means that OLS squares is the best choice when the errors are unbiased, independent, and have equal variances (["homoskedastic"](Homoscedasticity_and_heteroscedasticity))
+
+**Further reading:** In addition to the links above, these subjects are covered in countless statistics textbooks and courses.  For example, see [these course notes from CMU](https://www.stat.cmu.edu/~cshalizi/mreg/15/lectures/24/lecture-24--25.pdf)
+
+
 ## Lecture 16 (Mar 13)
 
 * [Optimization overview](https://docs.google.com/presentation/d/1K8BFfd-_6IWML2zpj_V88GvBjuJiK8EPHqYabDMU3CU/edit?usp=sharing) slides
@@ -205,3 +219,62 @@ The *nice* case of diagonalization is when you have **orthonormal eigenvectors**
 Broad overview of optimization problems (see slides). The most general formulation is actually quite difficult to solve, so most algorithms (especially the most efficient algorithms) solve various special cases, and it is important to know what the key factors are that distinguish a particular problem. There is also something of an art to the problem formulation itself, e.g. a nondifferentiable minimax problem can be reformulated as a nicer differentiable problem with differentiable constraints.
 
 **Further reading:** There are many textbooks on [nonlinear optimization](http://www.athenasc.com/nonlinbook.html) algorithms of various sorts, including specialized books on [convex optimization](http://web.stanford.edu/~boyd/cvxbook/), [derivative-free optimization](http://bookstore.siam.org/mp08/), etcetera.  A useful review of topology-optimization methods can be found in [Sigmund and Maute (2013)](https://link.springer.com/article/10.1007/s00158-013-0978-6).
+
+## Lecture 17 (Mar 15)
+
+* Matrix calculus — see also [our IAP 2023 course 18.S096](https://github.com/mitmath/matrixcalc).
+
+Reviewed and broadened differential calculus (18.01 and 18.02) from the perspective of 18.06, where we view a derivative f′(x) as a [linear operator](https://en.wikipedia.org/wiki/Linear_map) acting on a small change in the input (dx) to give you the change in the output (df) to *first order* in dx ("linearized").   This viewpoint makes it easy to generalize derivatives, to scalar-valued functions of vectors where f′(x) is the transposed gradient (∇f)ᵀ, to vector-valued functions of vectors where f′(x) is the [Jacobian matrix](https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant), and even to matrix-valued functions of matrices like f(x)=A² ⥰ df = A×dA+dA×A or f(x)=A⁻¹ ⥰ df=–A⁻¹×dA×A⁻¹; in both these cases f′(x) is a linear operator f′(x)[dA] that takes dA in and gives df out, but *cannot* be written simply as (matrix)×dA.
+
+Derivatives viewed as linear approximations have many important applications in science, machine learning, statistics, and engineering. For example, ∇f is essential for large-scale optimization of scalar-valued functions f(x), and we will see that *how* you compute the gradient is also critical for practical reasons.  As another example, there is the **multidimensional Newton** algorithm for finding roots f(x)=0 of systems of nonlinear equations: At each step, you just solve a *linear* system of equations with the Jacobian matrix of f(x), and it converges incredibly rapidly.
+
+**Further reading**: This material was presented in much greater depth in our [18.S096: Matrix Calculus](https://github.com/mitmath/matrixcalc) course in IAP 2022 and IAP 2023.    The viewpoint of derivatives as linear operators (also called [Fréchet derivatives](https://en.wikipedia.org/wiki/Fr%C3%A9chet_derivative)) was covered in lectures 1 and 2 of 18.S096, Newton's method was covered in lecture 4, and automatic differentiation was covered in lectures 5 and 8 — see the posted lecture materials and the further-reading links therein.   This [notebook](https://nbviewer.org/github/mitmath/1806/blob/fall22/notes/Newton-Thomson-example.ipynb) has a Newton's method example demo where we solve a 2d version of the famous [Thomson problem](https://en.wikipedia.org/wiki/Thomson_problem) to find the equilibrium position of N repulsive "point charges" constrained to lie on a circle; more generally, a sphere or hypersphere.
+
+## Lecture 18 (Mar 17)
+
+* d(A⁻¹), adjoint problems, chain rules, and forward vs reverse mode (backpropagation) derivatives
+* [pset 3 solutions](psets/pset3sol.ipynb)
+* [pset 4](psets/pset4.ipynb), due 4/7
+
+Showed that d(A⁻¹)=–A⁻¹ dA A⁻¹.  (For example, if you have a matrix A(t) that depends on a scalar t∈ℝ, this tells you that d(A⁻¹)/dt = –A⁻¹ dA/dt A⁻¹.)   Applied this to computing ∇ₚf for scalar functions f(A⁻¹b) where A(p) depends on some parameters p∈ℝⁿ, and showed that ∂f/∂pᵢ = -(∇ₓf)ᵀA⁻¹(∂A/∂pᵢ)x.  Moreover, showed that it is critically important to evaluate this expression from *left to right*, i.e. first computing vᵀ=-(∇ₓf)ᵀA⁻¹m, which corresponds to solving the "adjoint (transposed) equation" Aᵀv=–∇ₓf.  By doing so, you can compute both f and ∇ₚf at the cost of only "two solves" with matrices A and Aᵀ.  This is critically important in enabling engineering/physics optimization, where you often want to optimize a property of the solution A⁻¹b of a physical model A depending on many design variables p (e.g. the distribution of materials in space).
+
+More generally, presented the chain rule for f(g(x)) (f'(x)=g'(h(x))h'(x), where this is a *composition* of two linear operations, performing h' then g' — g'h' ≠ h'g'!).   For functions from vectors to vectors, the chain rule is simply the *product of Jacobians*.   Moreover, as soon as you compose 3 or more functions, it can a make a huge difference whether you multiply the Jacobians from left-to-right ("reverse-mode", or "backpropagation", or "adjoint differentiation") or right-to-left ("forward-mode"). Showed, for example, that if you have *many inputs but a single output* (as is common in machine learning and other types of optimization problem), that it is vastly more efficient to multiply left-to-right than right-to-left, and such "backpropagation algorithms" are a key factor in the practicality of large-scale optimization (including machine learning and neural nets).
+
+**Further reading:**   For the derivative of A(t)⁻¹, see Strang sec. III.1 and [OCW lecture 15](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-15-matrices-a-t-depending-on-t-derivative-da-dt/); for backpropagation, see Strang sec. VII.3 and [OCW lecture 27](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-27-backpropagation-find-partial-derivatives/).  See also [these slides](https://docs.google.com/presentation/d/1U1lB5bhscjbxEuH5FcFwMl5xbHl0qIEkMf5rm0MO8uE/edit?usp=sharing) from [our matrix calculus course](https://github.com/mitmath/matrixcalc) (lecture 4) on adjoint methods for f(A⁻¹b) and similar problems in engineering design. See the [notes on adjoint methods](https://github.com/mitmath/18335/blob/spring21/notes/adjoint/adjoint.pdf) and [slides](https://github.com/mitmath/18335/blob/spring21/notes/adjoint/adjoint-intro.pdf) from 18.335 in spring 2021 ([video](https://mit.zoom.us/rec/share/xLxMyhBSoIhSFxce5lHb1ubItby5BKFs6mgJJ7kMmjotETmaYm4YA22TA8w8n13i.6sTEFrkkloG7LFeR?startTime=1619463273000)) The terms "forward-mode" and "reverse-mode" differentiation are most prevalent in [automatic differentiation (AD)](https://en.wikipedia.org/wiki/Automatic_differentiation). You can find many, many articles online about [backpropagation](https://en.wikipedia.org/wiki/Backpropagation) in neural networks.  This [video on the principles of AD in Julia](https://www.youtube.com/watch?v=UqymrMG-Qi4) by [Dr. Mohamed Tarek](https://github.com/mohamed82008) also starts with a similar left-to-right (reverse) vs right-to-left (forward) viewpoint and goes into how it translates to Julia code, and how you define custom chain-rule steps for Julia AD.
+
+## Lecture 19 (Mar 20)
+
+* Line minimization and [steepest descent](https://en.wikipedia.org/wiki/Gradient_descent).
+* Newton steps and the Hessian matrix H
+* Condition number κ(H) of the Hessian and convergence of steepest descent
+* Example application: iteratively solving Ax=b (for A=Aᵀ positive definite) by minimizing f(x)=xᵀAx - xᵀb.  (See also the end of this [example notebook](https://github.com/mitmath/1806/blob/fall22/notes/Dense-and-Sparse.ipynb).)
+
+**Further reading**: Strang section VI.4; [OCW lecture 21](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-21-minimizing-a-function-step-by-step/) and [OCW lecture 22](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-22-gradient-descent-downhill-to-a-minimum/).
+
+## Lecture 20 (Mar 22)
+
+* Momentum terms, [nonlinear conjugate gradient](https://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method), and accelerated gradient descent
+* [m-strongly convex and M-smooth functions](https://angms.science/doc/CVX/CVX_alphabeta.pdf) (i.e. 2nd derivative bounded above and below by m and M, i.e. ∇f is M Lipschitz)
+
+**Further reading**: Strang section VI.4 and [OCW lecture 23](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-23-accelerating-gradient-descent-use-momentum/).  Conjugate gradient as an ideal Krylov method is covered by many authors, e.g. in [Trefethen and Bau](https://people.maths.ox.ac.uk/trefethen/text.html) lecture 38 or by [Shewchuk (1994)](http://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf); nonlinear conjugate gradient is reviewed by [Hager and Zhang (2006)](http://people.cs.vt.edu/~asandu/Public/Qual2011/Optim/Hager_2006_CG-survey.pdf) and its connection to "momentum" terms is covered by e.g. [Bhaya and Kaszkurewicz (2004)](https://www.sciencedirect.com/science/article/pii/S0893608003001709).  For accelerated gradient descent, see these [lecture notes](http://www.damtp.cam.ac.uk/user/hf323/M19-OPT/lecture5.pdf) from H. Fawzi at Cambridge Univ, and [this blog post](http://awibisono.github.io/2016/06/20/accelerated-gradient-descent.html) by A. Wibosono at Yale.  A recent article by [Karimi and Vavasis (2021)](https://arxiv.org/abs/2111.11613) presents an algorithm that blends the strengths of nonlinear conjugate gradient and accelerated gradient descent.
+
+## Lecture 21 (Mar 24)
+
+* [Stochastic gradient descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent): [Julia notebook](notes/Stochastic-Gradient-Descent.ipynb)
+
+**Further reading:** Strang section VI.5 and [OCW lecture 25](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-25-stochastic-gradient-descent/).  There are many, many tutorials on this topic online. See also the links and references in the [Julia notebook](notes/Stochastic-Gradient-Descent.ipynb).
+
+## Lecture 22 (Mar 24)
+
+* [slides from Boyd, chapter 5](https://github.com/mitmath/18335/blob/spring21/notes/boyd-ch5-slides.pdf)
+
+In order to handle optimization problems with constraints, it's useful
+to first generalize the local optimality criterion ∇f₀=0 for unconstrained problems, and this leads us into **Lagrangians**, **duality**, and **KKT conditions**.
+
+Started by reviewing the basic idea of Lagrange multipliers to find an extremum of one function f₀(x) and one equality constraint h₁(x)=0. We instead find an extremum of L(x,ν₁)=f₀(x)+ν₁h₁(x) over x and the _Lagrange multiplier_ ν₁. The ν₁ partial derivative of L ensures h₁(x)=0, in which case L=f0 and the remaining derivatives extremize f0 along the constraint surface. Noted that ∇L=0 then enforces ∇f₀=0 in the direction parallel to the constraint, whereas perpendicular to the constraint ν₁ represents a "force" that prevents x from leaving the h₁(x)=0 constraint surface.
+
+Generalized to the Lagrangian L(x,λ,ν) of the general optimization problem (the "primal" problem) with both inequality and equality constraints, following chapter 5 of the Boyd and Vandenberghe book (see below) (section 5.1.1).
+
+Described the KKT conditions for a (local) optimum/extremum (Boyd, section 5.5.3). These are true in problems with strong duality, as pointed out by Boyd, but they are actually true in much more general conditions. For example, they hold under the "LICQ" condition in which the gradients of all the active constraints are linearly independent.
+
+**Further reading:** _[Convex Optimization](http://www.stanford.edu/~boyd/cvxbook/)_ by Boyd and Vandenberghe (free book online), chapter 5. There are many sources on [Lagrange multipliers](http://en.wikipedia.org/wiki/Lagrange_multipliers) (the special case of equality constraints) online that can be found by googling.
