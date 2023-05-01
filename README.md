@@ -308,7 +308,7 @@ http://dx.doi.org/10.1137/S1052623499362822) — I used the "linear and separabl
 * Compressive sensing (CS) and ℓ¹ regularization (LASSO etc.).
 * [Slides](https://www.dropbox.com/s/iplx3gsk42t0xlb/Various-CS-slides.pdf?dl=0) collected from various sources.
 
-**Further reading:** Strang textbook, section III.5.  There are many tutorials and other information on CS/LASSO/etcetera online.  For example, these [Rice Univ. tutorial slides (Cevher, 2019)](https://www.epfl.ch/labs/lions/wp-content/uploads/2019/01/Volkan-CS-IPSN09-tutorial-part-1.pdf) or [Princeton Slides (Cheng, 2014)](https://3dvision.princeton.edu/courses/COS598/2014sp/slides/lecture20_Compressive_Sensing.pdf) are fairly accessible.  For compressed sensing in MRI, see e.g. the slides by [Lustig et al.](https://pages.cs.wisc.edu/~brecht/cs838docs/deshpande.project.pdf) and [Tamir (2019)](http://users.ece.utexas.edu/~jtamir/files/jtamir_compressed_sensing_ismrm19.pdf) and many other sources.
+**Further reading:** Strang textbook, section III.5.  There are many tutorials and other information on CS/LASSO/etcetera online.  For example, these [Rice Univ. tutorial slides (Cevher, 2019)](https://www.epfl.ch/labs/lions/wp-content/uploads/2019/01/Volkan-CS-IPSN09-tutorial-part-1.pdf) or [Princeton Slides (Cheng, 2014)](https://3dvision.princeton.edu/courses/COS598/2014sp/slides/lecture20_Compressive_Sensing.pdf) are fairly accessible.  For compressed sensing in MRI, see e.g. the slides by [Lustig et al.](https://pages.cs.wisc.edu/~brecht/cs838docs/deshpande.project.pdf) and [Tamir (2019)](http://users.ece.utexas.edu/~jtamir/files/jtamir_compressed_sensing_ismrm19.pdf) and many other sources. A hybrid of ℓ¹ (CS/LASSO) and ℓ² (ridge/Tikhonov) regularization is to use *both*, a combination called [elastic-net regularization](https://en.wikipedia.org/wiki/Elastic_net_regularization); see e.g. slides from [Univ. Iowa (Breheny)](https://myweb.uiowa.edu/pbreheny/7600/s16/notes/3-28.pdf).
 
 ## Lecture 26 (April 12)
 
@@ -316,3 +316,43 @@ http://dx.doi.org/10.1137/S1052623499362822) — I used the "linear and separabl
 * demo: [playground.tensorflow.org](http://playground.tensorflow.org/)
 
 **Further reading:** Strang section VII.1 and [OCW lecture 26](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-26-structure-of-neural-nets-for-deep-learning/).
+
+## Lecture 27 (Apr 14)
+
+* Backpropagation for neural networks.
+
+**Further reading:** Strang section VII.3 and [OCW lecture 27](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-27-backpropagation-find-partial-derivatives/).  You can find many, many articles online about [backpropagation](https://en.wikipedia.org/wiki/Backpropagation) in neural networks.   For generalizing gradients to scalar-valued functions of matrices and other abstract vector spaces, what we need is an inner product; we covered this in more detail in [lecture 4 of *Matrix Calculus* (IAP 2023)](https://github.com/mitmath/matrixcalc#lecture-4-jan-25).   Backpropagation for neural networks is closely related to backpropagation/adjoint methods [for recurrence relations (course notes)](https://math.mit.edu/~stevenj/18.336/recurrence2.pdf), and [on computational graphs (blog post)](https://colah.github.io/posts/2015-08-Backprop/); see also [lecture 8 of *Matrix Calculus* (IAP 2023)](https://github.com/mitmath/matrixcalc#lecture-8-feb-3).
+
+## Lecture 28 (Apr 19)
+
+* Non-negative matrix factorization — guest lecture by [Prof. Ankur Moitra](https://people.csail.mit.edu/moitra/).
+
+**Further reading:** Coming soon.
+
+## Lecture 29 (Apr 21)
+
+* [(Discrete) convolutions](https://en.wikipedia.org/wiki/Convolution#Discrete_convolution), translation-invariance, [circulant matrices](https://en.wikipedia.org/wiki/Circulant_matrix), and convolutional neural networks (CNNs)
+* [pset 5 solutions](psets/pset5sol.ipynb)
+
+**Further reading:** Strang textbook sections IV.2 (circulant matrices) and VII.2 (CNNs), and [OCW lecture 32](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-32-imagenet-is-a-cnn-the-convolution-rule/).  See also these [Stanford lecture slides](http://cs231n.stanford.edu/slides/2016/winter1516_lecture7.pdf) and [MIT lecture slides](https://mit6874.github.io/assets/sp2020/slides/L03_CNNs_MK2.pdf).
+
+## Lecture 30 (Apr 24)
+* Backpropagation and convolutions: differentiating with respect to convolution coefficients involves a convolution!  via identity uᵀ(a⊛v)=aᵀ(Rv⊛u).
+* The [discrete Fourier transform (DFT)](https://en.wikipedia.org/wiki/Discrete_Fourier_transform) and its inverse: [roots of unity](https://en.wikipedia.org/wiki/Root_of_unity), unitarity, diagonalizing convolutions.
+
+**Further reading**: Textbook section IV.1 and VII.2.
+
+## Lecture 31 (Apr 24)
+* Proof of the [convolution theorem](https://en.wikipedia.org/wiki/Convolution_theorem): a DFT diagonalizes circular convolutions
+* Convolutions y=a⊛x via DFT: DFT a and x, multiply elementwise, then inverse-DFT to obtain y!
+* [Fast Fourier transforms (FFTs)](https://en.wikipedia.org/wiki/Fast_Fourier_transform): DFTs (and many related problems) in O(N log N) operations.  Derived the [Cooley–Tukey FFT algorithm](https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm) and mentioned a few other algorithms.  See [slides](https://github.com/mitmath/18335/blob/spring21/notes/FFT.pdf).
+
+**Further reading**: Textbook sections IV.1–IV.2 and [OCW lecture 31](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-31-eigenvectors-of-circulant-matrices-fourier-matrix/) and [lecture 32](https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/resources/lecture-32-imagenet-is-a-cnn-the-convolution-rule/).  The [Wikipedia FFT article](https://en.wikipedia.org/wiki/Fast_Fourier_transform) (partially written by SGJ) was still not bad last I checked. [Gauss and the history of the fast Fourier transform](https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.309.181) (1985) is a wonderful article on the historical development of the FFT.  [Duhamel & Vetterli (1990)](https://doi.org/10.1016%2F0165-1684%2890%2990158-U) is a classic review article.  SGJ co-developed a little FFT library called [FFTW](https://www.fftw.org/).
+
+## Lecture 32 (Apr 25)
+
+* [pset 6](psets/pset6.ipynb): due Friday May 5.
+
+Fourier series vs. DFT: If we view the DFT as a [Riemann sum](https://en.wikipedia.org/wiki/Riemann_sum) approximation for a [Fourier series](https://en.wikipedia.org/wiki/Fourier_series) coefficient (which turns out to be *exponentially* accurate for smooth periodic f(t)!), then the errors are an instance of [aliasing](https://en.wikipedia.org/wiki/Aliasing) (see e.g. the ["wagon-wheel" effect](https://en.wikipedia.org/wiki/Wagon-wheel_effect)).  For band-limited signals where we sample at a rate > twice the bandwidth, there is no aliasing and no information loss, a result known as the [Nyquist—Shannon sampling theorem](https://en.wikipedia.org/wiki/Nyquist%E2%80%93Shannon_sampling_theorem); in the common case where the bandwidth is centered at ω=0, this corresponds to sampling at more than *twice* the highest frequency.
+
+**Further reading**: For a periodic function, a Riemann sum is equivalent to a trapezoidal rule (since the 0th and Nth samples are identical), and the exponential convergence to the integral is reviewed by [Trefethen and Weideman (2014)](https://epubs.siam.org/doi/pdf/10.1137/130932132); SGJ gave a [simplified review for IAP (2011)](https://math.mit.edu/~stevenj/trap-iap-2011.pdf). The subject of aliasing, sampling, and signal processing leads to the field of [digital signal processing (DSP)](https://en.wikipedia.org/wiki/Digital_signal_processing), on which there are many books and courses.  A classic textbook is [*Discrete-Time Signal Processing*](https://research.iaun.ac.ir/pd/naghsh/pdfs/UploadFile_2230.pdf) by Oppenheim and Schafer, and there are whole courses at MIT (like 6.3000 and 6.7000) on these topics.
